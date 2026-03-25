@@ -1,0 +1,31 @@
+name: SkillFlow Skill Scout
+
+on:
+  schedule:
+    - cron: '0 9 * * 1,4'  # Monday and Thursday at 9am UTC
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: pip install requests
+      
+      - name: Run Skill Scout
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python skill_scout.py
+      
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: scout-results
+          path: scout_results.json
